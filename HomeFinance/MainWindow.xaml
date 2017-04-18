@@ -1,0 +1,164 @@
+﻿<Window x:Class="HomeFinance.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:charting="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+        xmlns:local="clr-namespace:HomeFinance"
+        Title="Учет доходов и расходов" Height="512.523" Width="937.529">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Verdana" />
+            <Setter Property="Margin" Value="10 5 5 5" />
+            <Setter Property="TextAlignment" Value="Right" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Verdana" />
+            <Setter Property="Margin" Value="0 2 0 2" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="FontFamily" Value="Verdana" />
+            <Setter Property="Margin" Value="0 2 0 2" />
+        </Style>
+        <Style TargetType="DatePicker">
+            <Setter Property="FontFamily" Value="Verdana" />
+            <Setter Property="Margin" Value="0 2 0 2" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <TabControl x:Name="tabControl">
+            <TabItem x:Name="tabEdit" Header="Ввод данных">
+                <Grid x:Name="gridEditData" Background="#FFE5E5E5" PreviewKeyDown="Grid_PreviewKeyDown">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="10 0 10 0" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.6*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="0.6*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="0.7*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock >Доход / расход:</TextBlock>
+                        <ComboBox x:Name="cmbDebit" IsEditable="False" Grid.Column="1" SelectionChanged="cmdDebit_Selected" KeyDown="cmbDebit_KeyDown"></ComboBox>
+                        <TextBlock Grid.Row="1">Кто:</TextBlock>
+                        <ComboBox x:Name="cmbPerson" IsEditable="True"  Grid.Row="1" Grid.Column="1" KeyDown="cmbPerson_KeyDown" SelectedItem="{Binding Path=Person}">
+                        </ComboBox>
+                        <TextBlock Grid.Row="2" >Дата:</TextBlock>
+                        <DatePicker x:Name="txtDate" Grid.Row="2" Grid.Column="1" KeyDown="txtDate_KeyDown" SelectedDate="{Binding Path=Date}"></DatePicker>
+                        <TextBlock Grid.Row="0" Grid.Column="2">Сумма:</TextBlock>
+                        <TextBox x:Name="txtSumma" Grid.Row="0" Grid.Column="3" KeyDown="txtSumma_KeyDown" Text="{Binding Path=Summa}" GotFocus="txtSumma_GotFocus" LostFocus="txtSumma_LostFocus"></TextBox>
+                        <TextBlock Grid.Row="1" Grid.Column="2">Статья:</TextBlock>
+                        <ComboBox x:Name="cmbCategory" IsEditable="True" Grid.Row="1" Grid.Column="3" KeyDown="cmbCategory_KeyDown" SelectionChanged="cmbCategory_SelectionChanged" SelectedItem="{Binding Path=Category}"></ComboBox>
+                        <TextBlock Grid.Row="2" Grid.Column="2">Примечание:</TextBlock>
+                        <TextBox x:Name="txtNote" Grid.Row="2" Grid.Column="3" KeyDown="txtNote_KeyDown" Text="{Binding Path=Note}"></TextBox>
+                        <TextBlock Grid.Row="0" Grid.Column="4">Тип:</TextBlock>
+                        <ComboBox x:Name="cmbNotion" IsEditable="False"  Grid.Row="0" Grid.Column="5" KeyDown="cmbNotion_KeyDown" SelectedItem="{Binding Path=Notion}"></ComboBox>
+                        <TextBlock Grid.Row="1" Grid.Column="4">Актив:</TextBlock>
+                        <ComboBox x:Name="cmbAsset" IsEditable="True" Grid.Row="1" Grid.Column="5" KeyDown="cmbAsset_KeyDown" SelectedItem="{Binding Path=Asset}"></ComboBox>
+                        <TextBlock x:Name="txtStatus" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Center" Foreground="DarkGreen" TextWrapping="Wrap">Статус</TextBlock>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="5" >
+                            <Button x:Name="btnSave" Content="Сохранить" Margin="0 2 5 0" Padding="3 0 3 0" Click="btnSave_Click"/>
+                            <Button x:Name="btnNew" Content="Новая" Margin="0 2 5 0" Padding="3 0 3 0" Click="btnNew_Click"/>
+                            <Button x:Name="btnDel" Content="Удалить" Margin="0 2 0 0" Padding="3 0 3 0" Click="btnDel_Click"/>
+                        </StackPanel>
+                    </Grid>
+                    <DataGrid Grid.Row="1" AutoGenerateColumns="False" x:Name="listGrid" SelectedCellsChanged="listGrid_SelectedCellsChanged" GotFocus="listGrid_GotFocus" LostFocus="listGrid_LostFocus" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Date, StringFormat=D, ConverterCulture=RU}" Header="Дата" Width="100"/>
+                            <DataGridTextColumn Binding="{Binding Person}" Header="Человек" Width="90"/>
+                            <DataGridTextColumn Binding="{Binding Summa}" Header="Сумма" Width="70"/>
+                            <DataGridTextColumn Binding="{Binding Category}" Header="Статья" Width="90"/>
+                            <DataGridTextColumn Binding="{Binding Note}" Header="Примечание" Width="200"/>
+                            <DataGridTextColumn Binding="{Binding Notion}" Header="Тип" Width="130"/>
+                            <DataGridTextColumn Binding="{Binding Asset}" Header="Актив" Width="200"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Margin="10 0 10 0" Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton GroupName="DataInGrid" Content="Последние 50 записей  " IsChecked="True" />
+                        <RadioButton Grid.Column="1" GroupName="DataInGrid" Content="Фильтр по дате (+- 3 дня от указанной даты)" IsChecked="False" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Итоги">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid x:Name="gridFilter" Margin="10 0 10 0" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="27*"/>
+                            <ColumnDefinition Width="83*"/>
+                            <ColumnDefinition Width="184*"/>
+                            <ColumnDefinition Width="110*"/>
+                            <ColumnDefinition Width="184*"/>
+                            <ColumnDefinition Width="129*"/>
+                            <ColumnDefinition Width="183*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.ColumnSpan="2" >Дата - от:</TextBlock>
+                        <DatePicker x:Name="txtDateFrom" Grid.Row="0" Grid.Column="2" SelectedDate="{Binding Path=DateFrom}"></DatePicker>
+                        <TextBlock Grid.Row="1" Grid.ColumnSpan="2">Дата - до:</TextBlock>
+                        <DatePicker x:Name="txtDateTo" Grid.Row="1" Grid.Column="2" SelectedDate="{Binding Path=DateTo}"></DatePicker>
+                        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" >Отчет:</TextBlock>
+                        <ComboBox x:Name="cmbChart" IsEditable="False" Grid.Row="2" Grid.Column="2" SelectedItem="{Binding Path=ChartType}"></ComboBox>
+                        <TextBlock Grid.Row="0" Grid.Column="3">Доход / расход:</TextBlock>
+                        <ComboBox x:Name="cmbDebitF" IsEditable="False" Grid.Column="4" SelectionChanged="cmbDebitF_SelectionChanged" SelectedItem="{Binding Path=DebitType}"></ComboBox>
+                        <TextBlock Grid.Row="1" Grid.Column="3">Кто:</TextBlock>
+                        <ComboBox x:Name="cmbPersonF" IsEditable="True"  Grid.Row="1" Grid.Column="4" SelectedItem="{Binding Path=Person}">
+                        </ComboBox>
+                        <TextBlock Grid.Row="2" Grid.Column="3">Статья:</TextBlock>
+                        <ComboBox x:Name="cmbCategoryF" IsEditable="True" Grid.Row="2" Grid.Column="4" SelectedItem="{Binding Path=Category}"></ComboBox>
+                        <TextBlock Grid.Row="0" Grid.Column="5">Тип:</TextBlock>
+                        <ComboBox x:Name="cmbNotionF" IsEditable="False"  Grid.Row="0" Grid.Column="6" SelectedItem="{Binding Path=Notion}"></ComboBox>
+                        <TextBlock Grid.Row="1" Grid.Column="5">Актив:</TextBlock>
+                        <ComboBox x:Name="cmbAssetF" IsEditable="True" Grid.Row="1" Grid.Column="6" SelectedItem="{Binding Path=Asset}"></ComboBox>
+                        <Button x:Name="btnShowChart" Grid.Row="2" Grid.Column="6" Width="100" Content="Показать" Click="btnShowChart_Click">
+                        </Button>
+                    </Grid>
+                    <charting:Chart Grid.Row="1" Name="Charts">
+                    </charting:Chart>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Помощь">
+                <TextBlock TextAlignment="Left" TextWrapping="Wrap">
+                    Ввод данных реализован для быстрого ввода с клавиатуры.<LineBreak/>
+                    Нажатие Enter перемещает фокус ввода на следующий элемент.<LineBreak/>
+                    Клавиши + / - сдвигают дату на следующий / предыдущий день.<LineBreak/>
+                    <LineBreak/>
+                    Как добавить человека (или статью, или актив)?
+                    <LineBreak/>                    
+                    Чтобы ввести новый элемент в список для выбора, нужно написать новое значение, и нажать Enter.
+                    <LineBreak/>
+                    <LineBreak/>
+                    Как удалить человека (или статью, или актив)?
+                    <LineBreak/>
+                    Нужно выбрать значение в списке для выбора. Затем нажать клавишу Esc, и подтвердить удаление.
+                    <LineBreak/>
+                    <LineBreak/>
+                    Как быстро сохранить запись, не заполняя все значения?
+                    <LineBreak/>
+                    Можно нажать комбинацию клавиш Ctrl+Enter. Это равносильно нажатию кнопки "Сохранить".
+
+                </TextBlock>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>
